@@ -6,6 +6,8 @@ from django.urls import path
 from . import views
 urlpatterns = [
     path('', views.index),
+    path('register', views.register),
+    path('members', views.member_only ),
     path('login/', TokenObtainPairView.as_view()),
 
 ]
