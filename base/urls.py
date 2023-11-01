@@ -9,5 +9,6 @@ urlpatterns = [
     path('register', views.register),
     path('members', views.member_only ),
     path('login/', TokenObtainPairView.as_view()),
-
+    path('products', views.Product_view.as_view()),
+    path('categories', views.Category_view.as_view()),
 ]

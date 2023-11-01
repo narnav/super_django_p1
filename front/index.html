@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+</head>
+<body>
+    <div id="display"></div>
+    <script>
+        const MY_SERVER = "http://127.0.0.1:8000/"
+        const load_display=async()=>{
+            const res=await axios.get(MY_SERVER+"/products")
+            display.innerHTML =res.data.map(prod => `<div>
+                description: ${prod.description }
+                <img src=${prod.img }>
+                id:${prod.id }
+                </div>`) 
+        }
+        load_display()
+    </script>
+    Hello
+</body>
+</html>
