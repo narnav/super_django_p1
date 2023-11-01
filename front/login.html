@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+</head>
+
+<body>
+    User name:<input id="user">
+    password:<input id="pwd">
+    <button onclick="login()">Login</button>
+    <a href="index.html">Home</a>
+    <script>
+        const MY_SERVER = "http://127.0.0.1:8000/login/"
+        const login = () => {
+            axios.post(MY_SERVER, {
+                "username": "eyal",
+                "password": "123"
+            }).then(res => sessionStorage.setItem("token",res.data.access))
+        }
+
+    </script>
+</body>
+
+</html>

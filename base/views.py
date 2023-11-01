@@ -20,7 +20,7 @@ def index(req):
     return Response ( TaskSerializer(Task.objects.all(),many=True).data)
 
 
-@api_view(["get"])
+@api_view(["get","POST"])
 @permission_classes([IsAuthenticated])
 def member_only(req):
     print( req.user)

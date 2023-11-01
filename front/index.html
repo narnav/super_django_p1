@@ -14,14 +14,16 @@
     <div id="display"></div>
     <hr>
     <div id="myCart"></div>
+    <a href="login.html">Login</a>
+    <button onclick="checkOut()">Checkout</button>
     <script>
-        let cart=[]
+        let cart = []
         const MY_SERVER = "http://127.0.0.1:8000/"
-        let products=[]
+        let products = []
         const load_display = async () => {
             const res = await axios.get(MY_SERVER + "/products")
-            products=res.data
-            display.innerHTML = `<div class="row row-cols-1 row-cols-md-3 g-4">` +  res.data.map((prod,ind) => `
+            products = res.data
+            display.innerHTML = `<div class="row row-cols-1 row-cols-md-3 g-4">` + res.data.map((prod, ind) => `
             <div class="col">
             <div class="card">
             <img src=${prod.img} class="card-img-top" alt="...">
@@ -32,26 +34,26 @@
             </div>
             </div>
             </div>
-          `) 
-          display.innerHTML += "</div>"
+          `)
+            display.innerHTML += "</div>"
         }
         load_display()
-        const buy=(ind)=>{
-            product=products[ind]
+        const buy = (ind) => {
+            product = products[ind]
             // {id: 2, description: 'apple', price: 4, img: '/apple_kZ3Dp6C.jpg', category: 2}
-            
+
             // console.log(product);
-            if (cart.filter(item =>item.id === product.id  ).length > 0) {
-                currentProduct =cart.filter(item =>item.id === product.id  )[0]
+            if (cart.filter(item => item.id === product.id).length > 0) {
+                currentProduct = cart.filter(item => item.id === product.id)[0]
                 // console.log(currentProduct);
-                currentProduct.amount= parseInt( currentProduct.amount) +1
+                currentProduct.amount = parseInt(currentProduct.amount) + 1
             }
-            else{
-                cart.push({id:product.id,description:product.description,price:product.price,img:product.img,category:product.category,amount:1})
+            else {
+                cart.push({ id: product.id, description: product.description, price: product.price, img: product.img, category: product.category, amount: 1 })
             }
             // console.table(cart);
-            localStorage.setItem('cart',JSON.stringify( cart))
-            myCart.innerHTML = `<div class="row row-cols-1 row-cols-md-5 g-2">` +  cart.map((prod,ind) => `
+            localStorage.setItem('cart', JSON.stringify(cart))
+            myCart.innerHTML = `<div class="row row-cols-1 row-cols-md-5 g-2">` + cart.map((prod, ind) => `
             <div class="col">
             <div class="card">
             <img src=${prod.img} class="card-img-top" alt="...">
@@ -61,19 +63,30 @@
             </div>
             </div>
             </div>
-          `) 
-          myCart.innerHTML += "</div>"
-         
-         
+          `)
+            myCart.innerHTML += "</div>"
+
+
         }
-        const loadData=()=>{
-            temp =  localStorage.getItem('cart')
-            if (temp === null){
+        const loadData = () => {
+            temp = localStorage.getItem('cart')
+            if (temp === null) {
                 console.log("storage empty");
-            }else{
+            } else {
                 cart = JSON.parse(localStorage.getItem('cart'))
             }
-          }
+        }
+
+        const checkOut = async () => {
+            const token = sessionStorage.getItem("token")
+            let response = await axios.get(MY_SERVER + "members", {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token,
+                },
+            });
+            console.log(response.data);
+        }
     </script>
 </body>
 
