@@ -5,9 +5,31 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.views import APIView
 from rest_framework import status
-
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.models import User
 from .models import Task,Product,Category
+
+
+# login
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        # Add custom columns (user return payload - when login )
+        token['username'] = user.username
+        token['emaillll'] = user.email
+        token['blabla'] = "waga baga bbb"
+        # ...
+        return token
+
+
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
+
 
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
