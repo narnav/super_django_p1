@@ -49,7 +49,7 @@
                 currentProduct.amount = parseInt(currentProduct.amount) + 1
             }
             else {
-                cart.push({ id: product.id, description: product.description, price: product.price, img: product.img, category: product.category, amount: 1 })
+                cart.push({ id: product.id, description: product.description, price: product.price, img: product.img, category: product.category, amount: 1,product:2 })
             }
             // console.table(cart);
             localStorage.setItem('cart', JSON.stringify(cart))
@@ -79,12 +79,9 @@
 
         const checkOut = async () => {
             const token = sessionStorage.getItem("token")
-            const myCart = [
-                { "id": 2, "amount": 11 },
-                { "id": 2, "amount": 11 }
-            ]
+            const myCart = cart
             console.log(token);
-            let response = await axios.post(MY_SERVER + "order",  myCart , {
+            let response = await axios.post(MY_SERVER + "order",  {"items":cart} , {
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": "Bearer " + token,

@@ -43,7 +43,7 @@ class OrderDetailsSerializer(serializers.ModelSerializer):
 
 @permission_classes([IsAuthenticated])
 class OrderView(APIView):
-     def post(self, request):
+    def post(self, request):
         serializer = OrderSerializer(data=request.data, context={'user': request.user})
         if serializer.is_valid():
             order = serializer.save()
@@ -60,43 +60,11 @@ class OrderView(APIView):
             
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    # def post(self, request):
-    #     serializer = OrderSerializer(data=request.data, context={'user': request.user})
-    #     if serializer.is_valid():
-    #         order = serializer.save()
-            
-    #         # Add additional data for OrderDetails
-    #         order_data = request.data.copy()
-    #         order_data['order'] = order.id  # Assuming there's a foreign key to Order in OrderDetails
-            
-    #         serializerDt = OrderDetailsSerializer(data=order_data)
-    #         if serializerDt.is_valid():
-    #             serializerDt.save()
-    #             return Response(serializerDt.data, status=status.HTTP_201_CREATED)
-    #         else:
-    #             return Response(serializerDt.errors, status=status.HTTP_400_BAD_REQUEST)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # def post(self, request):
-    #     serializer = OrderSerializer(data=request.data, context={'user': request.user})
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         serializerDt = OrderDetailsSerializer(data=request.data)
-    #         print(request.data)
-    #         if serializerDt.is_valid():
-    #             serializerDt.save()
-    #             return Response(serializerDt.data, status=status.HTTP_201_CREATED)
-    #         else:
-    #             return Response(serializerDt.errors, status=status.HTTP_400_BAD_REQUEST)
-    #         # return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-    # def get(self, request):
-    #     my_model = Task.objects.all()
-    #     serializer = TaskSerializer(my_model, many=True)
-    #     return Response(serializer.data)
+    def get(self, request):
+        my_model = request.user.order_set.all()
+        serializer = OrderSerializer(my_model, many=True)
+        return Response(serializer.data)
 
 
     
