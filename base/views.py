@@ -8,9 +8,10 @@ from rest_framework import status
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth.models import User
-from .models import Task,Product,Category
+from rest_framework import viewsets
+from .models import Task,Product,Category,Order,OrderDetails
 
-
+#start Serializers section
 # login
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -23,7 +24,95 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         # ...
         return token
 
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = '__all__'
+    def create(self, validated_data):
+        user = self.context['user']
+        print(user)
+        return Order.objects.create(**validated_data,user=user)
 
+
+class OrderDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderDetails
+        fields = '__all__'
+
+#end Serializers section
+
+@permission_classes([IsAuthenticated])
+class OrderView(APIView):
+     def post(self, request):
+        serializer = OrderSerializer(data=request.data, context={'user': request.user})
+        if serializer.is_valid():
+            order = serializer.save()
+            
+            # Create OrderDetails objects for each item in the list
+            for item in request.data["items"]:
+                print(item)
+                item['order'] = order.id  # Assuming there's a foreign key to Order in OrderDetails
+                serializerDt = OrderDetailsSerializer(data=item)
+                if serializerDt.is_valid():
+                    serializerDt.save()
+                else:
+                    return Response(serializerDt.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def post(self, request):
+    #     serializer = OrderSerializer(data=request.data, context={'user': request.user})
+    #     if serializer.is_valid():
+    #         order = serializer.save()
+            
+    #         # Add additional data for OrderDetails
+    #         order_data = request.data.copy()
+    #         order_data['order'] = order.id  # Assuming there's a foreign key to Order in OrderDetails
+            
+    #         serializerDt = OrderDetailsSerializer(data=order_data)
+    #         if serializerDt.is_valid():
+    #             serializerDt.save()
+    #             return Response(serializerDt.data, status=status.HTTP_201_CREATED)
+    #         else:
+    #             return Response(serializerDt.errors, status=status.HTTP_400_BAD_REQUEST)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # def post(self, request):
+    #     serializer = OrderSerializer(data=request.data, context={'user': request.user})
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         serializerDt = OrderDetailsSerializer(data=request.data)
+    #         print(request.data)
+    #         if serializerDt.is_valid():
+    #             serializerDt.save()
+    #             return Response(serializerDt.data, status=status.HTTP_201_CREATED)
+    #         else:
+    #             return Response(serializerDt.errors, status=status.HTTP_400_BAD_REQUEST)
+    #         # return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+    # def get(self, request):
+    #     my_model = Task.objects.all()
+    #     serializer = TaskSerializer(my_model, many=True)
+    #     return Response(serializer.data)
+
+
+    
+   
+   
+
+
+
+
+
+
+
+class OrderDetailsViewSet(viewsets.ModelViewSet):
+    queryset = OrderDetails.objects.all()
+    serializer_class = OrderDetailsSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -125,3 +214,5 @@ class Category_view(APIView):
         my_model = Category.objects.get(pk=pk)
         my_model.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+

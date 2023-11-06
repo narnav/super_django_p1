@@ -31,6 +31,7 @@
                 "username": user.value,
                 "password": pwd.value
             })
+            sessionStorage.setItem("token",res.data.access)
             console.log(res.data.access);
             user=parseJwt(res.data.access).username
             great.innerHTML =`<h1> Welcome Dr. ${user}`

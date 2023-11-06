@@ -79,7 +79,12 @@
 
         const checkOut = async () => {
             const token = sessionStorage.getItem("token")
-            let response = await axios.get(MY_SERVER + "members", {
+            const myCart = [
+                { "id": 2, "amount": 11 },
+                { "id": 2, "amount": 11 }
+            ]
+            console.log(token);
+            let response = await axios.post(MY_SERVER + "order",  myCart , {
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": "Bearer " + token,
